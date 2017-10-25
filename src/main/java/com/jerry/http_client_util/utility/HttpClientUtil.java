@@ -8,6 +8,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.StringEntity;
@@ -89,7 +90,6 @@ public class HttpClientUtil {
         requestConfig = requestConfiguration;
     }
 
-
     private static SSLConnectionSocketFactory createSSLConn() {
         SSLConnectionSocketFactory sslsf = null;
         try {
@@ -156,6 +156,8 @@ public class HttpClientUtil {
         builder.addBinaryBody("file", byteData);
         return builder.build();
     }
+
+
 
     public static void setRetryCount(int retryCount) {
 
@@ -224,6 +226,47 @@ public class HttpClientUtil {
 
         HttpPost httpPost = new HttpPost(httpUrl);
         return sendHttpPost(httpPost, paramsJson);
+    }
+
+    public static CloseableHttpResponse sendHttpPut(HttpPut httpPut) {
+
+        CloseableHttpClient httpClient = null;
+        CloseableHttpResponse response = null;
+        try {
+            httpClient = getHttpClient();
+            httpPut.setConfig(requestConfig);
+            response = httpClient.execute(httpPut);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return response;
+    }
+
+    public static CloseableHttpResponse sendHttpPut(String httpUrl) {
+
+        HttpPut httpPut = new HttpPut(httpUrl);
+        return sendHttpPut(httpPut);
+    }
+
+    public static CloseableHttpResponse sendHttpPut(HttpPut httpPut, String paramsJson) {
+
+        try {
+            if (paramsJson != null && paramsJson.trim().length() > 0) {
+                StringEntity stringEntity = new StringEntity(paramsJson, "UTF-8");
+                stringEntity.setContentType(CONTENT_TYPE_JSON_URL);
+                httpPut.setEntity(stringEntity);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sendHttpPut(httpPut);
+    }
+
+    public static CloseableHttpResponse sendHttpPut(String httpUrl, String paramsJson) {
+
+        HttpPut httpPut = new HttpPut(httpUrl);
+        return sendHttpPut(httpPut, paramsJson);
     }
 
     public static CloseableHttpResponse sendHttpPostWithForm(HttpPost httpPost, Map<String, Object> params) {
@@ -317,6 +360,70 @@ public class HttpClientUtil {
         return sendHttpsPost(httpsPost);
     }
 
+    public static CloseableHttpResponse sendHttpsPost(HttpPost httpsPost, String paramsJson) {
+        try {
+            httpsPost.setConfig(requestConfig);
+            if (paramsJson != null && paramsJson.trim().length() > 0) {
+                StringEntity stringEntity = new StringEntity(paramsJson, "UTF-8");
+                stringEntity.setContentType(CONTENT_TYPE_JSON_URL);
+                httpsPost.setEntity(stringEntity);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sendHttpsPost(httpsPost);
+    }
+
+    public static CloseableHttpResponse sendHttpsPost(String uri, String paramsJson) {
+
+        HttpPost httpsPost = new HttpPost(uri);
+        return sendHttpsPost(httpsPost, paramsJson);
+    }
+
+    public static CloseableHttpResponse sendHttpsPut(HttpPut httpsPut) {
+
+        CloseableHttpClient httpsClient = getHttpsClient();
+        CloseableHttpResponse response = null;
+
+        try {
+            httpsPut.setConfig(requestConfig);
+            response = httpsClient.execute(httpsPut);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    public static CloseableHttpResponse sendHttpsPut(String httpUrl) {
+
+        HttpPut httpsPut = new HttpPut(httpUrl);
+        return sendHttpsPut(httpsPut);
+    }
+
+    public static CloseableHttpResponse sendHttpsPut(HttpPut httpsPut, String paramsJson) {
+
+        try {
+            httpsPut.setConfig(requestConfig);
+            if (paramsJson != null && paramsJson.trim().length() > 0) {
+                StringEntity stringEntity = new StringEntity(paramsJson, "UTF-8");
+                stringEntity.setContentType(CONTENT_TYPE_JSON_URL);
+                httpsPut.setEntity(stringEntity);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sendHttpsPut(httpsPut);
+    }
+
+    public static CloseableHttpResponse sendHttpsPut(String uri, String paramsJson) {
+
+        HttpPut httpsPut = new HttpPut(uri);
+        return sendHttpsPut(httpsPut, paramsJson);
+    }
+
     public static CloseableHttpResponse sendHttpsPostWithForm(HttpPost httpsPost, Map<String, Object> params) {
 
         CloseableHttpClient httpsClient = getHttpsClient();
@@ -340,27 +447,6 @@ public class HttpClientUtil {
 
         HttpPost httpsPost = new HttpPost(uri);
         return sendHttpsPostWithForm(httpsPost, params);
-    }
-
-    public static CloseableHttpResponse sendHttpsPost(HttpPost httpsPost, String paramsJson) {
-        try {
-            httpsPost.setConfig(requestConfig);
-            if (paramsJson != null && paramsJson.trim().length() > 0) {
-                StringEntity stringEntity = new StringEntity(paramsJson, "UTF-8");
-                stringEntity.setContentType(CONTENT_TYPE_JSON_URL);
-                httpsPost.setEntity(stringEntity);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return sendHttpsPost(httpsPost);
-    }
-
-    public static CloseableHttpResponse sendHttpsPost(String uri, String paramsJson) {
-
-        HttpPost httpsPost = new HttpPost(uri);
-        return sendHttpsPost(httpsPost, paramsJson);
     }
 
     public static CloseableHttpResponse sendHttpsPostWithFile(HttpPost httpsPost, String fileUrl) {
