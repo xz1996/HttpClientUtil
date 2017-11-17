@@ -5,10 +5,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.StringEntity;
@@ -157,8 +154,6 @@ public class HttpClientUtil {
         return builder.build();
     }
 
-
-
     public static void setRetryCount(int retryCount) {
 
         RETYR_COUNT = retryCount;
@@ -269,6 +264,32 @@ public class HttpClientUtil {
         return sendHttpPut(httpPut, paramsJson);
     }
 
+    public static CloseableHttpResponse sendHttpDelete(String httpUrl) {
+
+        HttpDelete httpDelete = new HttpDelete(httpUrl);
+        return sendHttpDelete(httpDelete);
+    }
+
+    public static CloseableHttpResponse sendHttpDelete(HttpDelete httpDelete) {
+
+        CloseableHttpClient httpClient = null;
+        CloseableHttpResponse response = null;
+        try {
+            //create the default instance of httpClient
+            httpClient = getHttpClient();
+
+            //configuring the request information
+            httpDelete.setConfig(requestConfig);
+
+            //executing the request
+            response = httpClient.execute(httpDelete);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
     public static CloseableHttpResponse sendHttpPostWithForm(HttpPost httpPost, Map<String, Object> params) {
 
         CloseableHttpClient httpClient = getHttpClient();
@@ -289,9 +310,9 @@ public class HttpClientUtil {
         return response;
     }
 
-    public static CloseableHttpResponse sendHttpPostWithForm(String url, Map<String, Object> params) {
+    public static CloseableHttpResponse sendHttpPostWithForm(String httpUrl, Map<String, Object> params) {
 
-        HttpPost httpPost = new HttpPost(url);
+        HttpPost httpPost = new HttpPost(httpUrl);
         return sendHttpPostWithForm(httpPost, params);
     }
 
@@ -302,9 +323,9 @@ public class HttpClientUtil {
         return sendHttpPost(httpPost);
     }
 
-    public static CloseableHttpResponse sendHttpPostWithFile(String uri, String fileUrl) {
+    public static CloseableHttpResponse sendHttpPostWithFile(String httpUrl, String fileUrl) {
 
-        HttpPost httpPost = new HttpPost(uri);
+        HttpPost httpPost = new HttpPost(httpUrl);
         return sendHttpPostWithFile(httpPost, fileUrl);
     }
 
@@ -315,9 +336,9 @@ public class HttpClientUtil {
         return sendHttpPost(httpPost);
     }
 
-    public static CloseableHttpResponse sendHttpPostWithByteArray(String uri, byte[] byteData) {
+    public static CloseableHttpResponse sendHttpPostWithByteArray(String httpUrl, byte[] byteData) {
 
-        HttpPost httpPost = new HttpPost(uri);
+        HttpPost httpPost = new HttpPost(httpUrl);
         return sendHttpPostWithByteArray(httpPost, byteData);
     }
 
@@ -334,9 +355,9 @@ public class HttpClientUtil {
         return response;
     }
 
-    public static CloseableHttpResponse sendHttpsGet(String httpUrl) {
+    public static CloseableHttpResponse sendHttpsGet(String httpsUrl) {
 
-        HttpGet httpsGet = new HttpGet(httpUrl);
+        HttpGet httpsGet = new HttpGet(httpsUrl);
         return sendHttpsGet(httpsGet);
     }
 
@@ -355,8 +376,8 @@ public class HttpClientUtil {
         return response;
     }
 
-    public static CloseableHttpResponse sendHttpsPost(String httpUrl) {
-        HttpPost httpsPost = new HttpPost(httpUrl);
+    public static CloseableHttpResponse sendHttpsPost(String httpsUrl) {
+        HttpPost httpsPost = new HttpPost(httpsUrl);
         return sendHttpsPost(httpsPost);
     }
 
@@ -375,9 +396,9 @@ public class HttpClientUtil {
         return sendHttpsPost(httpsPost);
     }
 
-    public static CloseableHttpResponse sendHttpsPost(String uri, String paramsJson) {
+    public static CloseableHttpResponse sendHttpsPost(String httpsUrl, String paramsJson) {
 
-        HttpPost httpsPost = new HttpPost(uri);
+        HttpPost httpsPost = new HttpPost(httpsUrl);
         return sendHttpsPost(httpsPost, paramsJson);
     }
 
@@ -396,9 +417,9 @@ public class HttpClientUtil {
         return response;
     }
 
-    public static CloseableHttpResponse sendHttpsPut(String httpUrl) {
+    public static CloseableHttpResponse sendHttpsPut(String httpsUrl) {
 
-        HttpPut httpsPut = new HttpPut(httpUrl);
+        HttpPut httpsPut = new HttpPut(httpsUrl);
         return sendHttpsPut(httpsPut);
     }
 
@@ -418,10 +439,29 @@ public class HttpClientUtil {
         return sendHttpsPut(httpsPut);
     }
 
-    public static CloseableHttpResponse sendHttpsPut(String uri, String paramsJson) {
+    public static CloseableHttpResponse sendHttpsPut(String httpsUrl, String paramsJson) {
 
-        HttpPut httpsPut = new HttpPut(uri);
+        HttpPut httpsPut = new HttpPut(httpsUrl);
         return sendHttpsPut(httpsPut, paramsJson);
+    }
+
+    public static CloseableHttpResponse sendHttpsDelete(HttpDelete httpsDelete) {
+
+        CloseableHttpClient httpsClient = getHttpsClient();
+        CloseableHttpResponse response = null;
+        try {
+            httpsDelete.setConfig(requestConfig);
+            response = httpsClient.execute(httpsDelete);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    public static CloseableHttpResponse sendHttpsDelete(String httpsUrl) {
+
+        HttpDelete httpsDelete = new HttpDelete(httpsUrl);
+        return sendHttpsDelete(httpsDelete);
     }
 
     public static CloseableHttpResponse sendHttpsPostWithForm(HttpPost httpsPost, Map<String, Object> params) {
@@ -443,9 +483,9 @@ public class HttpClientUtil {
         return response;
     }
 
-    public static CloseableHttpResponse sendHttpsPostWithForm(String uri, Map<String, Object> params) {
+    public static CloseableHttpResponse sendHttpsPostWithForm(String httpsUrl, Map<String, Object> params) {
 
-        HttpPost httpsPost = new HttpPost(uri);
+        HttpPost httpsPost = new HttpPost(httpsUrl);
         return sendHttpsPostWithForm(httpsPost, params);
     }
 
@@ -456,9 +496,9 @@ public class HttpClientUtil {
         return sendHttpsPost(httpsPost);
     }
 
-    public static CloseableHttpResponse sendHttpsPostWithFile(String uri, String fileUrl) {
+    public static CloseableHttpResponse sendHttpsPostWithFile(String httpsUrl, String fileUrl) {
 
-        HttpPost httpsPost = new HttpPost(uri);
+        HttpPost httpsPost = new HttpPost(httpsUrl);
         return sendHttpsPostWithFile(httpsPost, fileUrl);
     }
 
@@ -469,9 +509,9 @@ public class HttpClientUtil {
         return sendHttpsPost(httpsPost);
     }
 
-    public static CloseableHttpResponse sendHttpsPostWithByteArray(String uri, byte[] byteData) {
+    public static CloseableHttpResponse sendHttpsPostWithByteArray(String httpsUrl, byte[] byteData) {
 
-        HttpPost httpsPost = new HttpPost(uri);
+        HttpPost httpsPost = new HttpPost(httpsUrl);
         return sendHttpsPostWithByteArray(httpsPost, byteData);
     }
 
